@@ -17,4 +17,14 @@ export class UsuarioService {
       data,
     });
   }
+
+  async usuarioExiste(userName): Promise<boolean> {
+    const usuario = await this.prisma.usuario.findFirst({
+      where: {
+        usuario: userName,
+      },
+    });
+
+    return !!usuario;
+  }
 }

@@ -62,9 +62,12 @@ export class MembrosController {
       descubra,
     } = body;
 
+    const mask = /[0-9]/g;
+    const telefoneSemFormatacao = telefone.match(mask).join('');
+
     return this.membrosService.createMembro({
       nome,
-      telefone,
+      telefone: telefoneSemFormatacao,
       sexo,
       data_nascimento,
       cristao,

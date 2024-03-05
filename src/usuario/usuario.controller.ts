@@ -1,4 +1,10 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsuarioDto } from './models/usuario.dto';
 import { UsuarioService } from './usuario.service';
@@ -17,6 +23,10 @@ export class UsuarioController {
   @Post()
   async create(@Body() body: UsuarioDto) {
     const { nome, senha, tipo_usuario, usuario } = body;
+
+    if (await this.usuarioService.usuarioExiste(usuario)) {
+      throw new BadRequestException(`O usuário já existe`);
+    }
 
     return this.usuarioService.createUsuario({
       nome,
