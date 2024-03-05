@@ -1,0 +1,104 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Usuario {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  usuario      String   @unique
+  tipo_usuario Int
+  senha        String
+  celulas      Celula[]
+
+  @@map("usuarios")
+}
+
+model Celula {
+  id             Int            @id @default(autoincrement())
+  nome_celula    String
+  secretario     Usuario        @relation(fields: [secretarioId], references: [id])
+  secretarioId   Int
+  membros        CelulaMembro[]
+  larAnfitriao   LarAnfitriao   @relation(fields: [larAnfitriaoId], references: [id])
+  larAnfitriaoId Int
+
+  @@map("celulas")
+}
+
+model Membro {
+  id                   Int                @id @default(autoincrement())
+  nome                 String
+  telefone             String
+  sexo                 String
+  data_nascimento      DateTime
+  cristao              Boolean
+  novo_convertido      Boolean
+  escola_de_lideres    Boolean            @default(false)
+  descubra             Boolean            @default(false)
+  foto                 String?
+  encontroPresencas    EncontroPresenca[]
+  larAnfitriao         LarAnfitriao[]
+  liderTreinamento     Encontro[]
+  encontroId           Int?
+  lideres              Encontro[]         @relation("lider")
+  lideresEmTreinamento Encontro[]         @relation("liderEmTreinamento")
+  celulas              CelulaMembro[]
+
+  @@map("membros")
+}
+
+model CelulaMembro {
+  celula   Celula @relation(fields: [celulaId], references: [id])
+  celulaId Int
+  membro   Membro @relation(fields: [membroId], references: [id])
+  membroId Int
+
+  @@id([celulaId, membroId])
+  @@map("celula_membro")
+}
+
+model Encontro {
+  id                   Int                @id @default(autoincrement())
+  lider                Membro             @relation("lider", fields: [liderId], references: [id])
+  liderId              Int
+  liderEmTreinamento   Membro             @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
+  liderEmTreinamentoId Int
+  larAnfitriao         LarAnfitriao       @relation(fields: [larAnfitriaoId], references: [id])
+  larAnfitriaoId       Int
+  data                 DateTime
+  horario              String
+  observacoes          String?
+  encontroPresenca     EncontroPresenca[]
+  Membro               Membro?            @relation(fields: [membroId], references: [id])
+  membroId             Int?
+
+  @@map("encontros")
+}
+
+model LarAnfitriao {
+  id             Int        @id @default(autoincrement())
+  latitude       Float
+  longitude      Float
+  endereco       String
+  proprietario   Membro     @relation(fields: [proprietarioId], references: [id])
+  proprietarioId Int
+  Encontros      Encontro[]
+  Celulas        Celula[]
+
+  @@map("lares_anfitrioes")
+}
+
+model EncontroPresenca {
+  encontro   Encontro @relation(fields: [encontroId], references: [id])
+  encontroId Int
+  membro     Membro   @relation(fields: [membroId], references: [id])
+  membroId   Int
+
+  @@id([encontroId, membroId])
+  @@map("encontro_presenca")
+}
