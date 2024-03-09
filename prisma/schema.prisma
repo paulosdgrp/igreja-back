@@ -24,8 +24,8 @@ model Celula {
   secretario     Usuario        @relation(fields: [secretarioId], references: [id])
   secretarioId   Int
   membros        CelulaMembro[]
-  larAnfitriao   LarAnfitriao   @relation(fields: [larAnfitriaoId], references: [id])
-  larAnfitriaoId Int
+  larAnfitriao   LarAnfitriao?  @relation(fields: [larAnfitriaoId], references: [id])
+  larAnfitriaoId Int?
 
   @@map("celulas")
 }

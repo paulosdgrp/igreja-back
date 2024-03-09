@@ -1,20 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { CreateCelulaDto } from './models/create-celula.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CelulaService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.CelulaCreateInput) {
-    const { nome_celula, larAnfitriao, secretario } = data;
-    const membros = [] as unknown;
-    await this.prismaService.celula.create({
+  async create(createCelulaDto: CreateCelulaDto) {
+    const { nome_celula, uuid } = createCelulaDto;
+    return this.prisma.celula.create({
       data: {
-        nome_celula,
-        larAnfitriao,
-        secretario,
-        membros,
+        nome_celula: nome_celula,
+        secretario: {
+          connect: { id: uuid },
+        },
+      },
+    });
+  }
+
+  async findAll() {
+    return this.prisma.celula.findMany();
+  }
+
+  async findOne(id: number) {
+    return this.prisma.celula.findFirst({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async remove(id: number) {
+    return this.prisma.celula.delete({
+      where: {
+        id: id,
       },
     });
   }
