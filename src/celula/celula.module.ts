@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CelulaService } from './celula.service';
-import { CelulaController } from './celulas.controller';
+import { CelulaController } from './celula.controller';
 
 @Module({
   controllers: [CelulaController],
