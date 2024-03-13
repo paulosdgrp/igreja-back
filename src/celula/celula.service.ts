@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Celula } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Celula, Prisma } from '@prisma/client';
 import { CreateCelulaDto } from './models/create-celula.dto';
 
 @Injectable()
@@ -8,12 +8,27 @@ export class CelulaService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createCelulaDto: CreateCelulaDto): Promise<Celula> {
-    const { nome_celula, secretarioId } = createCelulaDto;
+    const {
+      nome_celula,
+      secretarioId,
+      anfitriaoId,
+      endereco,
+      latitude,
+      longitude,
+      liderEmTreinamentoId,
+      liderId,
+    } = createCelulaDto;
 
     return this.prisma.celula.create({
       data: {
         nome_celula: nome_celula,
         secretario: { connect: { id: secretarioId } },
+        anfitriao: { connect: { id: anfitriaoId } },
+        lider: { connect: { id: liderId } },
+        liderEmTreinamento: { connect: { id: liderEmTreinamentoId } },
+        endereco: endereco,
+        latitude: latitude,
+        longitude: longitude,
       },
     });
   }
@@ -43,10 +58,15 @@ export class CelulaService {
   }
 
   async remove(id: number) {
-    const celulaRemoved = this.prisma.celula.delete({
+    this.prisma.celula.delete({
       where: {
         id: id,
       },
     });
+  }
+
+  async addMembros(celulaId: number, ids: number[]) {
+    this.prisma
+      .$executeRaw`INSERT INTO "celula_membro" ("celulaId", "membroId") VALUES ${ids.map((id) => `(${celulaId}, ${id})`).join(', ')}`;
   }
 }

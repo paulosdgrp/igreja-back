@@ -8,24 +8,33 @@ generator client {
 }
 
 model Usuario {
-  id           Int      @id @default(autoincrement())
-  nome         String
-  usuario      String   @unique
-  tipo_usuario Int
-  senha        String
-  celulas      Celula[]
+  id                 Int     @id @default(autoincrement())
+  nome               String
+  usuario            String  @unique
+  tipo_usuario       Int
+  senha              String
+  celulaSecretariada Celula? @relation("secretario")
+  celulaAnfitriada   Celula? @relation("anfitriao")
 
   @@map("usuarios")
 }
 
 model Celula {
-  id             Int            @id @default(autoincrement())
-  nome_celula    String
-  secretario     Usuario        @relation(fields: [secretarioId], references: [id])
-  secretarioId   Int
-  membros        CelulaMembro[]
-  larAnfitriao   LarAnfitriao?  @relation(fields: [larAnfitriaoId], references: [id])
-  larAnfitriaoId Int?
+  id                   Int            @id @default(autoincrement())
+  nome_celula          String
+  secretario           Usuario        @relation("secretario", fields: [secretarioId], references: [id])
+  secretarioId         Int            @unique
+  membros              CelulaMembro[]
+  latitude             Float
+  longitude            Float
+  endereco             String
+  anfitriao            Usuario        @relation("anfitriao", fields: [anfitriaoId], references: [id])
+  anfitriaoId          Int            @unique
+  Encontros            Encontro[]
+  lider                Membro         @relation("lider", fields: [liderId], references: [id])
+  liderId              Int
+  liderEmTreinamento   Membro         @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
+  liderEmTreinamentoId Int
 
   @@map("celulas")
 }
@@ -42,11 +51,9 @@ model Membro {
   descubra             Boolean            @default(false)
   foto                 String?
   encontroPresencas    EncontroPresenca[]
-  larAnfitriao         LarAnfitriao[]
-  liderTreinamento     Encontro[]
   encontroId           Int?
-  lideres              Encontro[]         @relation("lider")
-  lideresEmTreinamento Encontro[]         @relation("liderEmTreinamento")
+  lideres              Celula[]           @relation("lider")
+  lideresEmTreinamento Celula[]           @relation("liderEmTreinamento")
   celulas              CelulaMembro[]
 
   @@map("membros")
@@ -63,34 +70,15 @@ model CelulaMembro {
 }
 
 model Encontro {
-  id                   Int                @id @default(autoincrement())
-  lider                Membro             @relation("lider", fields: [liderId], references: [id])
-  liderId              Int
-  liderEmTreinamento   Membro             @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
-  liderEmTreinamentoId Int
-  larAnfitriao         LarAnfitriao       @relation(fields: [larAnfitriaoId], references: [id])
-  larAnfitriaoId       Int
-  data                 DateTime
-  horario              String
-  observacoes          String?
-  encontroPresenca     EncontroPresenca[]
-  Membro               Membro?            @relation(fields: [membroId], references: [id])
-  membroId             Int?
+  id               Int                @id @default(autoincrement())
+  celula           Celula             @relation(fields: [celulaId], references: [id])
+  celulaId         Int
+  data             DateTime
+  horario          String
+  observacoes      String?
+  encontroPresenca EncontroPresenca[]
 
   @@map("encontros")
-}
-
-model LarAnfitriao {
-  id             Int        @id @default(autoincrement())
-  latitude       Float
-  longitude      Float
-  endereco       String
-  proprietario   Membro     @relation(fields: [proprietarioId], references: [id])
-  proprietarioId Int
-  Encontros      Encontro[]
-  Celulas        Celula[]
-
-  @@map("lares_anfitrioes")
 }
 
 model EncontroPresenca {

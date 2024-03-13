@@ -4,6 +4,7 @@ import { MembrosModule } from './membros/membros.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { CelulaModule } from './celula/celula.module';
+import { EncontroModule } from './encontro/encontro.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CelulaModule } from './celula/celula.module';
     PrismaModule,
     UsuarioModule,
     CelulaModule,
+    EncontroModule,
   ],
   controllers: [],
   providers: [],

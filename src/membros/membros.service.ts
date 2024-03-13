@@ -36,4 +36,24 @@ export class MembrosService {
       data,
     });
   }
+
+  async updateMembro(params: {
+    where: Prisma.MembroWhereUniqueInput;
+    data: Prisma.MembroUpdateInput;
+  }): Promise<Membro> {
+    const { where, data } = params;
+    return this.prisma.membro.update({
+      data,
+      where,
+    });
+  }
+
+  async setPhoto(membroId: number, imagePath: string) {
+    await this.prisma.membro.update({
+      where: { id: membroId },
+      data: {
+        foto: imagePath,
+      },
+    });
+  }
 }

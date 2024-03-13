@@ -20,9 +20,9 @@ export class UsuarioController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post()
-  async create(@Body() body: UsuarioDto) {
-    const { nome, senha, tipo_usuario, usuario } = body;
+  @Post('admin')
+  async createAdmin(@Body() body: UsuarioDto) {
+    const { nome, senha, usuario } = body;
 
     if (await this.usuarioService.usuarioExiste(usuario)) {
       throw new BadRequestException(`O usuário já existe`);
@@ -31,7 +31,39 @@ export class UsuarioController {
     return this.usuarioService.createUsuario({
       nome,
       senha,
-      tipo_usuario,
+      tipo_usuario: 1,
+      usuario,
+    });
+  }
+
+  @Post('secretario')
+  async createSecretario(@Body() body: UsuarioDto) {
+    const { nome, senha, usuario } = body;
+
+    if (await this.usuarioService.usuarioExiste(usuario)) {
+      throw new BadRequestException(`O usuário já existe`);
+    }
+
+    return this.usuarioService.createUsuario({
+      nome,
+      senha,
+      tipo_usuario: 2,
+      usuario,
+    });
+  }
+
+  @Post('anfitriao')
+  async createAnfitriao(@Body() body: UsuarioDto) {
+    const { nome, senha, usuario } = body;
+
+    if (await this.usuarioService.usuarioExiste(usuario)) {
+      throw new BadRequestException(`O usuário já existe`);
+    }
+
+    return this.usuarioService.createUsuario({
+      nome,
+      senha,
+      tipo_usuario: 3,
       usuario,
     });
   }

@@ -9,6 +9,36 @@ export class CreateCelulaDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty({ description: 'ID do secretário' })
+  @ApiProperty({ description: 'Secretário da célula' })
   secretarioId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Latitude da célula' })
+  latitude: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Longitude da célula' })
+  longitude: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Endereço da célula' })
+  endereco: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Anfitriãop da célula' })
+  anfitriaoId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Id do líder' })
+  liderId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Id do líder em treinamento' })
+  liderEmTreinamentoId: number;
 }

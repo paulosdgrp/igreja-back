@@ -5,6 +5,7 @@ import {
   HttpException,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -14,6 +15,8 @@ import { CreateMembroDto } from './models/create-membro.dto';
 import { MembrosService } from './membros.service';
 import { Roles } from '../decorators/auth.decorator';
 import { TipoUsuario } from '../usuario/models/tipo-usuario';
+import * as fs from 'fs';
+import { SetPhotoDto } from './models/set-photo-dto';
 
 @ApiTags('membros')
 @Controller('/membros')
@@ -60,12 +63,13 @@ export class MembrosController {
       novo_convertido,
       escola_de_lideres,
       descubra,
+      foto,
     } = body;
 
     const mask = /[0-9]/g;
     const telefoneSemFormatacao = telefone.match(mask).join('');
 
-    return this.membrosService.createMembro({
+    const membro = await this.membrosService.createMembro({
       nome,
       telefone: telefoneSemFormatacao,
       sexo,
@@ -74,6 +78,62 @@ export class MembrosController {
       novo_convertido,
       escola_de_lideres,
       descubra,
+    });
+
+    if (foto) {
+      await this.setPhoto(membro.id.toString(), { foto });
+    }
+
+    return membro;
+  }
+
+  @Put(':id/photo')
+  async setPhoto(@Param('id') id: string, @Body() body: SetPhotoDto) {
+    const { foto } = body;
+    const membro = await this.membrosService.membro({ id: +id });
+    if (!membro) throw new HttpException('Membro não encontrado', 404);
+
+    const buffer = Buffer.from(foto.split(',')[1], 'base64');
+    const imagePath = `membros/${membro.id}.png`;
+
+    fs.writeFileSync(`public/${imagePath}`, buffer);
+    await this.membrosService.setPhoto(membro.id, imagePath);
+
+    membro.foto = imagePath;
+    return membro;
+  }
+
+  @Put(':id')
+  async updateMember(@Param('id') id: string, @Body() body: CreateMembroDto) {
+    const {
+      nome,
+      telefone,
+      sexo,
+      data_nascimento,
+      cristao,
+      novo_convertido,
+      escola_de_lideres,
+      descubra,
+    } = body;
+
+    const mask = /[0-9]/g;
+    const telefoneSemFormatacao = telefone.match(mask).join('');
+
+    const membro = await this.membrosService.membro({ id: +id });
+    if (!membro) throw new HttpException('Membro não encontrado', 404);
+
+    return this.membrosService.updateMembro({
+      where: { id: +id },
+      data: {
+        nome,
+        telefone: telefoneSemFormatacao,
+        sexo,
+        data_nascimento,
+        cristao,
+        novo_convertido,
+        escola_de_lideres,
+        descubra,
+      },
     });
   }
 }

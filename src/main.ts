@@ -23,10 +23,6 @@ async function bootstrap() {
     .addTag('celulas', 'Gerenciamento das células da igreja')
     .addTag('membros', 'Gerenciamento dos membros da igreja')
     .addTag('encontros', 'Organização e acompanhamento dos encontros')
-    .addTag(
-      'lares-anfitrioes',
-      'Gerenciamento dos lares anfitriões para encontros e atividades',
-    )
     .addBearerAuth()
     .build();
 

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
+import {
+  IsBase64,
+  IsBoolean,
+  IsDate,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateMembroDto {
   @IsString()
@@ -34,7 +40,7 @@ export class CreateMembroDto {
   @ApiProperty({ description: 'É da escola de líderes?' })
   escola_de_lideres: boolean;
 
-  @IsString()
+  @IsBase64()
   @IsOptional()
   @ApiProperty({ description: 'Foto', required: false })
   foto?: string;
