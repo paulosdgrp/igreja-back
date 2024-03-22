@@ -6,6 +6,8 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { CelulaModule } from './celula/celula.module';
 import { EncontroModule } from './encontro/encontro.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -16,6 +18,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
     CelulaModule,
     EncontroModule,
     DashboardModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [],
   providers: [],
