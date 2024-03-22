@@ -52,22 +52,6 @@ export class UsuarioController {
     });
   }
 
-  @Post('anfitriao')
-  async createAnfitriao(@Body() body: UsuarioDto) {
-    const { nome, senha, usuario } = body;
-
-    if (await this.usuarioService.usuarioExiste(usuario)) {
-      throw new BadRequestException(`O usuário já existe`);
-    }
-
-    return this.usuarioService.createUsuario({
-      nome,
-      senha,
-      tipo_usuario: 3,
-      usuario,
-    });
-  }
-
   @Post('/login')
   async login(@Body() body: LoginDto) {
     const { senha, usuario } = body;
@@ -79,11 +63,16 @@ export class UsuarioController {
 
     if (!data) throw new UnauthorizedException('Usuário ou senha inválidos');
 
-    const token = await this.authService.generateToken({
-      id: data.id,
-      username: data.usuario,
-      roles: [data.tipo_usuario] as TipoUsuario[],
-    });
+    const token = await this.authService.generateToken(
+      {
+        id: data.id,
+        nome: data.nome,
+        tipo_usuario: data.tipo_usuario,
+      },
+      {
+        expiresIn: 60 * 60 * 24,
+      },
+    );
 
     return {
       ...data,

@@ -69,4 +69,8 @@ export class CelulaService {
     this.prisma
       .$executeRaw`INSERT INTO "celula_membro" ("celulaId", "membroId") VALUES ${ids.map((id) => `(${celulaId}, ${id})`).join(', ')}`;
   }
+
+  async countAll() {
+    return this.prisma.celula.count();
+  }
 }

@@ -8,8 +8,8 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   async generateToken(user: UsuarioLogado, options?: JwtSignOptions) {
-    const { username, id, roles } = user;
-    const payload = { username, id, roles };
+    const { nome, id, tipo_usuario } = user;
+    const payload = { nome, id, tipo_usuario };
 
     return {
       access_token: this.jwtService.sign(payload, options),

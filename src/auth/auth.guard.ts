@@ -33,7 +33,7 @@ export class AuthGuard {
       request.user = decoded as UsuarioLogado;
 
       if (!requiredRoles) return true;
-      return requiredRoles.some((role) => decoded.roles?.includes(role));
+      return requiredRoles.some((role) => decoded.tipo_usuario === role);
     } catch (e) {
       throw new UnauthorizedException('Token inválido');
     }
