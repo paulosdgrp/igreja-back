@@ -65,7 +65,6 @@ export class MembrosController {
       descubra,
       foto,
     } = body;
-
     const mask = /[0-9]/g;
     const telefoneSemFormatacao = telefone.match(mask).join('');
 
@@ -95,7 +94,11 @@ export class MembrosController {
 
     const buffer = Buffer.from(foto.split(',')[1], 'base64');
     const imagePath = `membros/${membro.id}.png`;
-
+    try {
+      fs.mkdirSync(`public/membros`, { recursive: true } );
+    } catch (e) {
+        console.log('Cannot create folder ', e);
+    }
     fs.writeFileSync(`public/${imagePath}`, buffer);
     await this.membrosService.setPhoto(membro.id, imagePath);
 
