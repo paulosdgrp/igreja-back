@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBase64, IsEnum, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsPositive, IsString } from 'class-validator';
 import { TipoUsuario } from './tipo-usuario';
 import { SetPhotoDto } from 'src/membros/models/set-photo-dto';
 
-export class UsuarioDto {
+export class UsuarioDto extends SetPhotoDto {
   @IsString()
   @ApiProperty({ type: String, description: 'Nome do usuário' })
   nome: string;
@@ -24,7 +24,4 @@ export class UsuarioDto {
   @IsString()
   @ApiProperty({ type: String, description: 'Senha' })
   senha: string;
-
-  @IsBase64()
-  foto?: string;
 }
