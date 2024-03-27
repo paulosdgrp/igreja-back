@@ -14,26 +14,24 @@ model Usuario {
   tipo_usuario       Int
   senha              String
   celulaSecretariada Celula? @relation("secretario")
-  celulaAnfitriada   Celula? @relation("anfitriao")
+  foto               String?
 
   @@map("usuarios")
 }
 
 model Celula {
-  id                   Int            @id @default(autoincrement())
+  id                   Int        @id @default(autoincrement())
   nome_celula          String
-  secretario           Usuario        @relation("secretario", fields: [secretarioId], references: [id])
-  secretarioId         Int            @unique
-  membros              CelulaMembro[]
+  secretario           Usuario    @relation("secretario", fields: [secretarioId], references: [id])
+  secretarioId         Int        @unique
+  membros              Membro[]
   latitude             Float
   longitude            Float
   endereco             String
-  anfitriao            Usuario        @relation("anfitriao", fields: [anfitriaoId], references: [id])
-  anfitriaoId          Int            @unique
   Encontros            Encontro[]
-  lider                Membro         @relation("lider", fields: [liderId], references: [id])
+  lider                Membro     @relation("lider", fields: [liderId], references: [id])
   liderId              Int
-  liderEmTreinamento   Membro         @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
+  liderEmTreinamento   Membro     @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
   liderEmTreinamentoId Int
 
   @@map("celulas")
@@ -51,22 +49,12 @@ model Membro {
   descubra             Boolean            @default(false)
   foto                 String?
   encontroPresencas    EncontroPresenca[]
-  encontroId           Int?
   lideres              Celula[]           @relation("lider")
   lideresEmTreinamento Celula[]           @relation("liderEmTreinamento")
-  celulas              CelulaMembro[]
+  celulaId             Int?
+  celula               Celula?            @relation(fields: [celulaId], references: [id])
 
   @@map("membros")
-}
-
-model CelulaMembro {
-  celula   Celula @relation(fields: [celulaId], references: [id])
-  celulaId Int
-  membro   Membro @relation(fields: [membroId], references: [id])
-  membroId Int
-
-  @@id([celulaId, membroId])
-  @@map("celula_membro")
 }
 
 model Encontro {
