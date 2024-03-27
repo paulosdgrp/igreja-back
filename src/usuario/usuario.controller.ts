@@ -1,17 +1,21 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Get,
+  HttpException,
+  Param,
   Post,
+  Put,
   UnauthorizedException,
-  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import * as fs from 'fs';
+import { SetPhotoDto } from 'src/membros/models/set-photo-dto';
+import { AuthService } from '../auth/auth.service';
+import { LoginDto } from './models/login.dto';
 import { UsuarioDto } from './models/usuario.dto';
 import { UsuarioService } from './usuario.service';
-import { AuthService } from '../auth/auth.service';
-import { TipoUsuario } from './models/tipo-usuario';
-import { LoginDto } from './models/login.dto';
-
 @ApiTags('usuarios')
 @Controller('/usuarios')
 export class UsuarioController {
@@ -44,12 +48,48 @@ export class UsuarioController {
       throw new BadRequestException(`O usuário já existe`);
     }
 
-    return this.usuarioService.createUsuario({
+    const secretario = await this.usuarioService.createUsuario({
       nome,
       senha,
       tipo_usuario: 2,
       usuario,
     });
+
+    if (body.foto) {
+      return await this.setPhoto(secretario.id, { foto: body.foto });
+    }
+
+    return secretario;
+  }
+
+  @Put(':id/photo')
+  async setPhoto(@Param('id') id: number, @Body() body: SetPhotoDto) {
+    const { foto } = body;
+    const secretario = await this.usuarioService.getUsuario(+id);
+    if (!secretario) throw new HttpException('Usuário não encontrado', 404);
+
+    const buffer = Buffer.from(foto.split(',')[1], 'base64');
+    const imagePath = `secretarios/${secretario.id}.png`;
+    try {
+      fs.mkdirSync(`public/membros`, { recursive: true });
+    } catch (e) {
+      console.log('Cannot create folder ', e);
+    }
+    fs.writeFileSync(`public/${imagePath}`, buffer);
+    await this.usuarioService.setPhoto(secretario.id, imagePath);
+
+    secretario.foto = imagePath;
+    return secretario;
+  }
+
+  @Get('secretario')
+  async getSecretario() {
+    const secretarios = await this.usuarioService.getUsuarios({
+      celulaSecretariada: null,
+    });
+
+    secretarios.forEach((s) => (s.senha = undefined));
+    return secretarios;
   }
 
   @Post('/login')

@@ -3,6 +3,7 @@ import {
   IsBase64,
   IsBoolean,
   IsDate,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -44,4 +45,11 @@ export class CreateMembroDto {
   @IsOptional()
   @ApiProperty({ description: 'Foto', required: false })
   foto?: string;
+
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({ description: 'Celula', required: false})
+  idCelula: number;
+
 }

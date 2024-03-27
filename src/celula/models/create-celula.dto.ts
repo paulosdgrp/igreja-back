@@ -29,11 +29,6 @@ export class CreateCelulaDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Anfitriãop da célula' })
-  anfitriaoId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
   @ApiProperty({ description: 'Id do líder' })
   liderId: number;
 

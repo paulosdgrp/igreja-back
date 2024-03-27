@@ -18,6 +18,32 @@ export class UsuarioService {
     });
   }
 
+  getUsuarios(where: Prisma.UsuarioWhereInput) {
+    return this.prisma.usuario.findMany({
+      where,
+    });
+  }
+
+  getUsuario(id: number) {
+    return this.prisma.usuario.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
+  setPhoto(id: number, path: string) {
+    return this.prisma.usuario.update({
+      where: {
+        id,
+      },
+
+      data: {
+        foto: path,
+      },
+    });
+  }
+
   async usuarioExiste(userName: string): Promise<boolean> {
     const usuario = await this.prisma.usuario.findFirst({
       where: {

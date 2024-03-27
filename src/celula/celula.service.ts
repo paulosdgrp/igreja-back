@@ -11,7 +11,6 @@ export class CelulaService {
     const {
       nome_celula,
       secretarioId,
-      anfitriaoId,
       endereco,
       latitude,
       longitude,
@@ -23,7 +22,6 @@ export class CelulaService {
       data: {
         nome_celula: nome_celula,
         secretario: { connect: { id: secretarioId } },
-        anfitriao: { connect: { id: anfitriaoId } },
         lider: { connect: { id: liderId } },
         liderEmTreinamento: { connect: { id: liderEmTreinamentoId } },
         endereco: endereco,
