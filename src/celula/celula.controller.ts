@@ -23,6 +23,8 @@ export class CelulaController {
       ...createCelulaDto,
       latitude: 1000,
       longitude: 1000,
+      liderEmTreinamentoId: undefined,
+      liderId: undefined
     });
   }
 

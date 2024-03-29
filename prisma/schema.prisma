@@ -29,10 +29,10 @@ model Celula {
   longitude            Float
   endereco             String
   Encontros            Encontro[]
-  lider                Membro     @relation("lider", fields: [liderId], references: [id])
-  liderId              Int
-  liderEmTreinamento   Membro     @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
-  liderEmTreinamentoId Int
+  lider                Membro?    @relation("lider", fields: [liderId], references: [id])
+  liderId              Int?
+  liderEmTreinamento   Membro?    @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
+  liderEmTreinamentoId Int?
 
   @@map("celulas")
 }

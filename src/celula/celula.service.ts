@@ -22,8 +22,10 @@ export class CelulaService {
       data: {
         nome_celula: nome_celula,
         secretario: { connect: { id: secretarioId } },
-        lider: { connect: { id: liderId } },
-        liderEmTreinamento: { connect: { id: liderEmTreinamentoId } },
+        lider: liderId ? { connect: { id: liderId } } : undefined,
+        liderEmTreinamento: liderEmTreinamentoId
+          ? { connect: { id: liderEmTreinamentoId } }
+          : undefined,
         endereco: endereco,
         latitude: latitude,
         longitude: longitude,

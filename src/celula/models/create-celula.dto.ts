@@ -28,12 +28,10 @@ export class CreateCelulaDto {
   endereco: string;
 
   @IsNumber()
-  @IsNotEmpty()
   @ApiProperty({ description: 'Id do líder' })
   liderId: number;
 
   @IsNumber()
-  @IsNotEmpty()
   @ApiProperty({ description: 'Id do líder em treinamento' })
   liderEmTreinamentoId: number;
 }
