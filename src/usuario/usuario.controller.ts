@@ -86,6 +86,7 @@ export class UsuarioController {
   async getSecretario() {
     const secretarios = await this.usuarioService.getUsuarios({
       celulaSecretariada: null,
+      tipo_usuario: 2
     });
 
     secretarios.forEach((s) => (s.senha = undefined));

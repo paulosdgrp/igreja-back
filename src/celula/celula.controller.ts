@@ -19,7 +19,11 @@ export class CelulaController {
 
   @Post()
   create(@Body(ValidationPipe) createCelulaDto: CreateCelulaDto) {
-    return this.celulaService.create(createCelulaDto);
+    return this.celulaService.create({
+      ...createCelulaDto,
+      latitude: 1000,
+      longitude: 1000,
+    });
   }
 
   @Get()
