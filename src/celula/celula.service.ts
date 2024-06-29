@@ -10,37 +10,27 @@ export class CelulaService {
   async create(createCelulaDto: CreateCelulaDto): Promise<Celula> {
     const {
       nome_celula,
-      secretarioId,
       endereco,
-      latitude,
-      longitude,
       liderEmTreinamentoId,
       liderId,
+      anfitriaoId,
     } = createCelulaDto;
 
     return this.prisma.celula.create({
       data: {
         nome_celula: nome_celula,
-        secretario: { connect: { id: secretarioId } },
         lider: liderId ? { connect: { id: liderId } } : undefined,
         liderEmTreinamento: liderEmTreinamentoId
           ? { connect: { id: liderEmTreinamentoId } }
           : undefined,
+        anfitriao: anfitriaoId ? { connect: { id: anfitriaoId } } : undefined,
         endereco: endereco,
-        latitude: latitude,
-        longitude: longitude,
       },
     });
   }
 
   async findAll() {
-    const findAllCelulas = this.prisma.celula.findMany();
-
-    if ((await findAllCelulas).length === 0) {
-      throw new NotFoundException('Nenhuma célula encontrada');
-    }
-
-    return findAllCelulas;
+    return this.prisma.celula.findMany();
   }
 
   async findOne(id: number) {

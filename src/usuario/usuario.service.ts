@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsuarioService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async login(data: Prisma.UsuarioWhereInput) {
-    return this.prisma.usuario.findFirst({
+  async login(data: Prisma.UsuarioWhereInput, senha: string) {
+    const user = await this.prisma.usuario.findFirst({
       where: data,
     });
+
+    if (user && (await bcrypt.compare(senha, user.senha))) {
+      return user;
+    }
+
+    return null;
   }
 
   createUsuario(data: Prisma.UsuarioCreateInput) {

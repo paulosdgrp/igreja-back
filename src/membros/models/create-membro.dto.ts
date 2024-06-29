@@ -46,10 +46,12 @@ export class CreateMembroDto {
   @ApiProperty({ description: 'Foto', required: false })
   foto?: string;
 
-
   @IsNumber()
   @IsOptional()
-  @ApiProperty({ description: 'Celula', required: false})
+  @ApiProperty({ description: 'Celula', required: false })
   idCelula: number;
 
+  @IsNumber()
+  @ApiProperty({ description: 'Tipo de membro', required: true })
+  tipo_membro: number;
 }

@@ -8,13 +8,12 @@ export class EncontroService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createEncontroDto: CreateEncontroDto): Promise<Encontro> {
-    const { celulaId, data, horario, observacoes } = createEncontroDto;
+    const { celulaId, data, observacoes } = createEncontroDto;
 
     return this.prisma.encontro.create({
       data: {
         celula: { connect: { id: celulaId } },
         data: data,
-        horario: horario,
         observacoes: observacoes,
       },
     });

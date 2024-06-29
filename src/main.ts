@@ -1,14 +1,10 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { urlencoded, json } from 'express';
+import { json } from 'express';
+import { AppModule } from './app.module';
+import 'dotenv/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });

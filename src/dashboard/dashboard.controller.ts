@@ -17,4 +17,10 @@ export class DashboardController {
   getDashboardAdmin() {
     return this.dashboardService.adminDashboard();
   }
+
+  @Get('secretario')
+  @Roles(TipoUsuario.SECRETARIO)
+  getDashboardSecretaria() {
+    return this.dashboardService.adminDashboard();
+  }
 }

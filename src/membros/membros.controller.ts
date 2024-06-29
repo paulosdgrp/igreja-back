@@ -6,42 +6,64 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import * as fs from 'fs';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreateMembroDto } from './models/create-membro.dto';
-import { MembrosService } from './membros.service';
 import { Roles } from '../decorators/auth.decorator';
 import { TipoUsuario } from '../usuario/models/tipo-usuario';
-import * as fs from 'fs';
+import { MembrosService } from './membros.service';
+import { CreateMembroDto } from './models/create-membro.dto';
 import { SetPhotoDto } from './models/set-photo-dto';
+import { CelulaService } from 'src/celula/celula.service';
 
 @ApiTags('membros')
 @Controller('/membros')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class MembrosController {
-  constructor(private readonly membrosService: MembrosService) {}
+  constructor(
+    private readonly membrosService: MembrosService,
+    private readonly celulaService: CelulaService,
+  ) {}
 
   @Get()
-  @ApiQuery({ name: 'skip', required: false })
-  @ApiQuery({ name: 'take', required: false })
+  @ApiQuery({ name: 'tipo_membro', required: false })
   @Roles(TipoUsuario.ADMIN, TipoUsuario.SECRETARIO)
-  getAllMembers(
-    @Query('skip', {
-      transform: (value) => parseInt(value),
-    })
-    skip?: number,
-    @Query('take', {
-      transform: (value) => parseInt(value),
-    })
-    take?: number,
-  ) {
+  async getAllMembers() {
+    return this.membrosService.membroComCelula();
+  }
+
+  @Get('/anfitrioes')
+  async getAllAnfitrioes() {
+    const celulas = await this.celulaService.findAll();
+    const anfitrioesIds = celulas
+      .map((celula) => celula.anfitriaoId)
+      .filter((id) => id !== null);
+
     return this.membrosService.membros({
-      skip: skip || 0,
-      take: take || 10,
+      where: { id: { notIn: anfitrioesIds }, tipo_membro: 4 },
+    });
+  }
+
+  @Get('/lideres')
+  async getAllLideres() {
+    const celulas = await this.celulaService.findAll();
+    const lideresIds = celulas.map((celula) => celula.liderId);
+    return this.membrosService.membros({
+      where: { id: { notIn: lideresIds }, tipo_membro: 2 },
+    });
+  }
+
+  @Get('/lideres_treinamento')
+  async getAllLideresTreinamento() {
+    const celulas = await this.celulaService.findAll();
+    const lideresTreinamentoIds = celulas.map(
+      (celula) => celula.liderEmTreinamentoId,
+    );
+    return this.membrosService.membros({
+      where: { id: { notIn: lideresTreinamentoIds }, tipo_membro: 3 },
     });
   }
 
@@ -64,6 +86,7 @@ export class MembrosController {
       escola_de_lideres,
       descubra,
       foto,
+      tipo_membro,
     } = body;
     const mask = /[0-9]/g;
     const telefoneSemFormatacao = telefone.match(mask).join('');
@@ -77,6 +100,7 @@ export class MembrosController {
       novo_convertido,
       escola_de_lideres,
       descubra,
+      tipo_membro,
     });
 
     if (foto) {
@@ -95,9 +119,9 @@ export class MembrosController {
     const buffer = Buffer.from(foto.split(',')[1], 'base64');
     const imagePath = `membros/${membro.id}.png`;
     try {
-      fs.mkdirSync(`public/membros`, { recursive: true } );
+      fs.mkdirSync(`public/membros`, { recursive: true });
     } catch (e) {
-        console.log('Cannot create folder ', e);
+      console.log('Cannot create folder ', e);
     }
     fs.writeFileSync(`public/${imagePath}`, buffer);
     await this.membrosService.setPhoto(membro.id, imagePath);
@@ -131,7 +155,7 @@ export class MembrosController {
         nome,
         telefone: telefoneSemFormatacao,
         sexo,
-        data_nascimento,
+        data_nascimento: new Date(data_nascimento).toISOString(),
         cristao,
         novo_convertido,
         escola_de_lideres,

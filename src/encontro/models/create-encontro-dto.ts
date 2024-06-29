@@ -11,10 +11,6 @@ export class CreateEncontroDto {
   @ApiProperty({ description: 'Data do encontro' })
   data: Date;
 
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Horário do encontro' })
-  horario: string;
-
   @ApiProperty({ description: 'Observações do encontro' })
   observacoes: string;
 }

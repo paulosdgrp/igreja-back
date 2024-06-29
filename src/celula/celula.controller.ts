@@ -19,12 +19,9 @@ export class CelulaController {
 
   @Post()
   create(@Body(ValidationPipe) createCelulaDto: CreateCelulaDto) {
+    console.log(createCelulaDto);
     return this.celulaService.create({
       ...createCelulaDto,
-      latitude: 1000,
-      longitude: 1000,
-      liderEmTreinamentoId: undefined,
-      liderId: undefined
     });
   }
 

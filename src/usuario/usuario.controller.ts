@@ -16,6 +16,7 @@ import { AuthService } from '../auth/auth.service';
 import { LoginDto } from './models/login.dto';
 import { UsuarioDto } from './models/usuario.dto';
 import { UsuarioService } from './usuario.service';
+import * as bcrypt from 'bcrypt';
 @ApiTags('usuarios')
 @Controller('/usuarios')
 export class UsuarioController {
@@ -32,9 +33,12 @@ export class UsuarioController {
       throw new BadRequestException(`O usuário já existe`);
     }
 
+    const saltRounds = 10;
+    const senhaHash = await bcrypt.hash(senha, saltRounds);
+
     return this.usuarioService.createUsuario({
       nome,
-      senha,
+      senha: senhaHash,
       tipo_usuario: 1,
       usuario,
     });
@@ -85,8 +89,7 @@ export class UsuarioController {
   @Get('secretario')
   async getSecretario() {
     const secretarios = await this.usuarioService.getUsuarios({
-      celulaSecretariada: null,
-      tipo_usuario: 2
+      tipo_usuario: 2,
     });
 
     secretarios.forEach((s) => (s.senha = undefined));
@@ -97,10 +100,12 @@ export class UsuarioController {
   async login(@Body() body: LoginDto) {
     const { senha, usuario } = body;
 
-    const data = await this.usuarioService.login({
+    const data = await this.usuarioService.login(
+      {
+        usuario,
+      },
       senha,
-      usuario,
-    });
+    );
 
     if (!data) throw new UnauthorizedException('Usuário ou senha inválidos');
 

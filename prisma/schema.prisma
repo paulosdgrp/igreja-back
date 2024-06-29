@@ -8,13 +8,13 @@ generator client {
 }
 
 model Usuario {
-  id                 Int     @id @default(autoincrement())
-  nome               String
-  usuario            String  @unique
-  tipo_usuario       Int
-  senha              String
-  celulaSecretariada Celula? @relation("secretario")
-  foto               String?
+  id           Int     @id @default(autoincrement())
+  nome         String
+  usuario      String  @unique
+  tipo_usuario Int
+  senha        String
+  celulaId     Int?    @unique
+  foto         String?
 
   @@map("usuarios")
 }
@@ -22,17 +22,15 @@ model Usuario {
 model Celula {
   id                   Int        @id @default(autoincrement())
   nome_celula          String
-  secretario           Usuario    @relation("secretario", fields: [secretarioId], references: [id])
-  secretarioId         Int        @unique
-  membros              Membro[]
-  latitude             Float
-  longitude            Float
   endereco             String
+  foto                 String?
   Encontros            Encontro[]
   lider                Membro?    @relation("lider", fields: [liderId], references: [id])
-  liderId              Int?
+  liderId              Int?       @unique
   liderEmTreinamento   Membro?    @relation("liderEmTreinamento", fields: [liderEmTreinamentoId], references: [id])
-  liderEmTreinamentoId Int?
+  liderEmTreinamentoId Int?       @unique
+  anfitriao            Membro?    @relation("anfitriao", fields: [anfitriaoId], references: [id])
+  anfitriaoId          Int?       @unique
 
   @@map("celulas")
 }
@@ -49,10 +47,10 @@ model Membro {
   descubra             Boolean            @default(false)
   foto                 String?
   encontroPresencas    EncontroPresenca[]
-  lideres              Celula[]           @relation("lider")
-  lideresEmTreinamento Celula[]           @relation("liderEmTreinamento")
-  celulaId             Int?
-  celula               Celula?            @relation(fields: [celulaId], references: [id])
+  celulaLiderada       Celula?            @relation("lider")
+  lideresEmTreinamento Celula?            @relation("liderEmTreinamento")
+  anfitrioes           Celula?            @relation("anfitriao")
+  tipo_membro          Int
 
   @@map("membros")
 }
@@ -62,7 +60,6 @@ model Encontro {
   celula           Celula             @relation(fields: [celulaId], references: [id])
   celulaId         Int
   data             DateTime
-  horario          String
   observacoes      String?
   encontroPresenca EncontroPresenca[]
 
@@ -74,6 +71,7 @@ model EncontroPresenca {
   encontroId Int
   membro     Membro   @relation(fields: [membroId], references: [id])
   membroId   Int
+  visita     Boolean
 
   @@id([encontroId, membroId])
   @@map("encontro_presenca")
