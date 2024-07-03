@@ -52,9 +52,12 @@ export class UsuarioController {
       throw new BadRequestException(`O usuário já existe`);
     }
 
+    const saltRounds = 10;
+    const senhaHash = await bcrypt.hash(senha, saltRounds);
+
     const secretario = await this.usuarioService.createUsuario({
       nome,
-      senha,
+      senha: senhaHash,
       tipo_usuario: 2,
       usuario,
     });
